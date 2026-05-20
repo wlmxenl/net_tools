@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Team Files</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #1f2937;
+        background: #f4f7fb;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: #f4f7fb;
+      }
+
+      .shell {
+        width: min(100%, 1040px);
+        margin: 0 auto;
+        padding: 32px 20px 44px;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 14px 0 28px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .mark {
+        width: 38px;
+        height: 38px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #2563eb, #14b8a6);
+      }
+
+      .brand strong {
+        display: block;
+        font-size: 18px;
+      }
+
+      .brand span,
+      .muted {
+        color: #64748b;
+        font-size: 13px;
+      }
+
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border: 1px solid #dbe4ef;
+        border-radius: 999px;
+        background: #fff;
+        color: #334155;
+        font-size: 13px;
+      }
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: #10b981;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.7fr);
+        gap: 24px;
+        align-items: stretch;
+      }
+
+      section,
+      .panel {
+        border: 1px solid #dbe4ef;
+        border-radius: 8px;
+        background: #fff;
+        box-shadow: 0 14px 40px rgba(15, 23, 42, 0.06);
+      }
+
+      section {
+        padding: 30px;
+      }
+
+      h1 {
+        margin: 0;
+        max-width: 640px;
+        font-size: clamp(32px, 5vw, 52px);
+        line-height: 1.05;
+        letter-spacing: 0;
+      }
+
+      p {
+        margin: 14px 0 0;
+        color: #64748b;
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-top: 28px;
+      }
+
+      .stat {
+        padding: 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+      }
+
+      .stat strong {
+        display: block;
+        font-size: 22px;
+      }
+
+      .stat span {
+        color: #64748b;
+        font-size: 13px;
+      }
+
+      .panel {
+        padding: 22px;
+      }
+
+      .panel h2 {
+        margin: 0 0 16px;
+        font-size: 17px;
+        letter-spacing: 0;
+      }
+
+      .file {
+        display: grid;
+        grid-template-columns: 34px minmax(0, 1fr) auto;
+        gap: 12px;
+        align-items: center;
+        padding: 12px 0;
+        border-top: 1px solid #e2e8f0;
+      }
+
+      .file:first-of-type {
+        border-top: 0;
+      }
+
+      .icon {
+        display: grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        background: #eff6ff;
+        color: #2563eb;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .meta {
+        color: #64748b;
+        font-size: 12px;
+      }
+
+      footer {
+        margin-top: 28px;
+        color: #64748b;
+        font-size: 13px;
+        text-align: center;
+      }
+
+      @media (max-width: 760px) {
+        header,
+        .hero {
+          grid-template-columns: 1fr;
+        }
+
+        header {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .stats {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <div class="brand">
+          <div class="mark" aria-hidden="true"></div>
+          <div>
+            <strong>Team Files</strong>
+            <span>Private workspace</span>
+          </div>
+        </div>
+        <div class="status"><span class="dot"></span>Online</div>
+      </header>
+
+      <main class="hero">
+        <section>
+          <h1>Shared documents, notes, and releases in one quiet place.</h1>
+          <p>Use this workspace to keep project files organized and available for the team.</p>
+          <div class="stats">
+            <div class="stat">
+              <strong>128</strong>
+              <span>Files synced</span>
+            </div>
+            <div class="stat">
+              <strong>24 GB</strong>
+              <span>Storage used</span>
+            </div>
+            <div class="stat">
+              <strong>99.9%</strong>
+              <span>Availability</span>
+            </div>
+          </div>
+        </section>
+
+        <aside class="panel">
+          <h2>Recent files</h2>
+          <div class="file">
+            <div class="icon">PDF</div>
+            <div>
+              <div class="name">Project overview.pdf</div>
+              <div class="meta">Shared internally</div>
+            </div>
+            <div class="meta">2.4 MB</div>
+          </div>
+          <div class="file">
+            <div class="icon">DOC</div>
+            <div>
+              <div class="name">Operations notes.docx</div>
+              <div class="meta">Revision current</div>
+            </div>
+            <div class="meta">812 KB</div>
+          </div>
+          <div class="file">
+            <div class="icon">ZIP</div>
+            <div>
+              <div class="name">Release package.zip</div>
+              <div class="meta">Archived package</div>
+            </div>
+            <div class="meta">18 MB</div>
+          </div>
+        </aside>
+      </main>
+
+      <footer>Service status normal. Scheduled maintenance windows are announced internally.</footer>
+    </div>
+  </body>
+</html>
