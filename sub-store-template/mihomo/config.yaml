@@ -1,0 +1,155 @@
+# 机场订阅
+proxy-providers:
+  # Airport1:
+  #   url: "机场订阅"
+  #   path: ./proxy_providers/机场订阅.yaml
+  #   type: http
+  #   interval: 86400
+  #   health-check:
+  #     enable: true
+  #     url: https://www.gstatic.com/generate_204
+  #     interval: 300
+  #   proxy: DIRECT
+
+
+
+# https://wiki.metacubex.one/config/general/
+# https://github.com/MetaCubeX/mihomo/blob/Meta/docs/config.yaml
+# https://wiki.metacubex.one/example/conf/#__tabbed_3_1
+# 全局配置
+
+log-level: info # 日志等级 silent/error/warning/info/debug
+mode: rule
+port: 7890  # HTTP(S) 代理服务器端口
+socks-port: 7891 # SOCKS5 代理端口
+mixed-port: 10801 # HTTP(S) 和 SOCKS 代理混合端口
+redir-port: 7892 # 透明代理端口，用于 Linux 和 MacOS
+tproxy-port: 7893 # Transparent proxy server port for Linux (TProxy TCP and TProxy UDP)
+allow-lan: true # 允许局域网连接
+bind-address: "*" # 绑定 IP 地址，仅作用于 allow-lan 为 true，'*'表示所有地址
+ipv6: true 
+
+unified-delay: true # 去除握手等额外延迟
+tcp-concurrent: true # 同时对所有ip进行连接，返回延迟最低的地址
+
+# find-process-mode has 3 values:always, strict, off
+# - always, 开启，强制匹配所有进程
+# - strict, 默认，由 mihomo 判断是否开启
+# - off, 不匹配进程，推荐在路由器上使用此模式
+find-process-mode: strict
+
+# 全局 TLS 指纹，优先低于 proxy 内的 client-fingerprint
+# 可选： "chrome","firefox","safari","ios","random","none" options.
+# Utls is currently support TLS transport in TCP/grpc/WS/HTTP for VLESS/Vmess and trojan.
+global-client-fingerprint: chrome
+
+#keep-alive-idle: 600
+#keep-alive-interval: 15
+#disable-keep-alive: false
+
+profile:
+  store-selected: true  # 存储 select 选择记录
+  store-fake-ip: true # 持久化 fake-ip
+
+# 控制面板
+#external-controller: 0.0.0.0:9090
+#secret: ""
+#external-ui: "/etc/mihomo/run/ui"
+#external-ui-name: zashboard
+#external-ui-url: "https://github.com/Zephyruso/zashboard/archive/refs/heads/gh-pages.zip"
+
+# DNS模块
+dns:
+  enable: true
+  cache-algorithm: arc
+  prefer-h3: false
+  listen: 0.0.0.0:1053
+  ipv6: false
+  respect-rules: true
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter-mode: blacklist
+  fake-ip-filter:
+    - "*.lan"
+    - localhost.ptlogin2.qq.com
+    - "rule-set:private_domain"
+    - "rule-set:cn_domain"
+    - "+.msftconnecttest.com"
+    - "+.msftncsi.com"
+    - "time.*.com"
+  fake-ip-ttl: 1
+  default-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+  proxy-server-nameserver:
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+  nameserver:
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+ 
+# 节点信息
+proxies:
+  - {name: 🎯 直连, type: direct}
+
+# 出站策略
+proxy-groups:
+  - {name: 🚀 节点选择, type: select, proxies: [♻️ 自动选择], include-all: true, filter: "^(?!.*(直连)).*$"}
+  - {name: ♻️ 自动选择, type: url-test, include-all: true, tolerance: 20, interval: 300, filter: "^(?!.*(直连|rfc)).*$"}
+  - {name: 🤖 国外 AI, type: select, proxies: [🚀 节点选择], include-all: true, filter: "^(?!.*(直连|hk)).*$"}
+  - {name: 📹 YouTube, type: select, proxies: [🚀 节点选择], include-all: true, filter: "^((?!直连).)*$"}
+  - {name: 🍀 Google, type: select, proxies: [🚀 节点选择], include-all: true, filter: "^((?!直连).)*$"}  
+  - {name: 👨🏿‍💻 GitHub, type: select, proxies: [🚀 节点选择], include-all: true, filter: "^((?!直连).)*$"}
+  - {name: 🪟 Microsoft, type: select, proxies: [🚀 节点选择], include-all: true, filter: "^((?!直连).)*$"}  
+  - {name: 📲 Telegram, type: select, proxies: [🚀 节点选择], include-all: true, filter: "^((?!直连).)*$"}
+  - {name: 🎵 TikTok, type: select, proxies: [🚀 节点选择], include-all: true, filter: "^((?!直连).)*$"}
+  - {name: 🐟 漏网之鱼, type: select, proxies: [🚀 节点选择, 🎯 直连], include-all: true, filter: "^((?!直连).)*$"}
+
+# 规则匹配
+rules:
+  - RULE-SET,private_domain,DIRECT
+  - RULE-SET,private_ip,DIRECT,no-resolve
+  - RULE-SET,cn_domain,DIRECT
+  - RULE-SET,cn_ip,DIRECT,no-resolve
+  - RULE-SET,apple_domain,DIRECT
+  - RULE-SET,apple_ip,DIRECT,no-resolve
+  - RULE-SET,ai,🤖 国外 AI
+  - RULE-SET,youtube_domain,📹 YouTube
+  - RULE-SET,google_domain,🍀 Google
+  - RULE-SET,google_ip,🍀 Google,no-resolve
+  - RULE-SET,github_domain,👨🏿‍💻 GitHub
+  - RULE-SET,microsoft_domain,🪟 Microsoft
+  - RULE-SET,tiktok_domain,🎵 TikTok
+  - RULE-SET,telegram_domain,📲 Telegram
+  - RULE-SET,telegram_ip,📲 Telegram,no-resolve
+  - RULE-SET,geolocation-!cn,🚀 节点选择
+  - MATCH,🐟 漏网之鱼
+
+# 规则集
+rule-anchor:
+  ip: &ip {type: http, interval: 86400, behavior: ipcidr, format: mrs}
+  domain: &domain {type: http, interval: 86400, behavior: domain, format: mrs}
+  
+rule-providers: 
+  private_domain: { <<: *domain, url: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/private.mrs"}
+  private_ip: {<<: *ip, url: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/private.mrs"}
+
+  cn_domain: { <<: *domain, url: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/cn.mrs"}
+  cn_ip: { <<: *ip, url: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/cn.mrs"}
+
+  google_domain: { <<: *domain, url: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/google.mrs"}
+  google_ip: { <<: *ip, url: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/google.mrs"}
+  github_domain: { <<: *domain, url: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/github.mrs"}
+
+  telegram_domain: { <<: *domain, url: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/telegram.mrs"}
+  telegram_ip: { <<: *ip, url: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/telegram.mrs"}
+
+  apple_domain: { <<: *domain, url: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/apple-cn.mrs"}
+  apple_ip: {<<: *ip, url: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo-lite/geoip/apple.mrs"}
+
+  ai: {  <<: *domain, url: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/category-ai-!cn.mrs" }
+  youtube_domain: { <<: *domain, url: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/youtube.mrs"}
+  microsoft_domain: { <<: *domain, url: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/microsoft.mrs"}
+  tiktok_domain: { <<: *domain, url: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/tiktok.mrs"}
+  geolocation-!cn: { <<: *domain, url: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/geolocation-!cn.mrs"}
+  
