@@ -39,7 +39,7 @@ set_config_value() {
     fi
 }
 
-disable_agent_remote_tasks() {
+disable_agent_unsafe_features() {
     echo "开始禁用 nezha-agent 不安全特性..."
 
     if [ ! -d "$NZ_AGENT_PATH" ]; then
@@ -64,6 +64,9 @@ disable_agent_remote_tasks() {
 
     for config in $config_files; do
         echo "正在更新配置：$config"
+        echo "  - disable_command_execute：禁用命令执行、在线终端、文件列表"
+        echo "  - disable_nat：禁用内网穿透"
+        echo "  - disable_auto_update：禁用自动更新"
 
         if ! set_config_value "$config" "disable_command_execute"; then
             err "更新 disable_command_execute 失败：$config"
@@ -98,8 +101,6 @@ disable_agent_remote_tasks() {
         err "部分 nezha-agent 配置更新失败"
         exit 1
     fi
-
-    success "所有 nezha-agent 不安全特性配置更新完成"
 }
 
-disable_agent_remote_tasks
+disable_agent_unsafe_features
