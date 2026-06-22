@@ -99,7 +99,7 @@ proxy-groups:
 rules:
   - RULE-SET,applications,DIRECT
   - RULE-SET,private,DIRECT
-  - RULE-SET,reject,REJECT
+  # - RULE-SET,reject,REJECT
   - RULE-SET,icloud,DIRECT
   - RULE-SET,apple,DIRECT
   - RULE-SET,ai,🧠 AI 服务
@@ -130,7 +130,7 @@ rule-anchor:
 
 rule-providers:
   # Loyalsoldier (yaml)
-  reject: {<<: *yaml-domain, url: "https://testingcf.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt"}
+  # reject: {<<: *yaml-domain, url: "https://testingcf.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt"}
   icloud: {<<: *yaml-domain, url: "https://testingcf.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/icloud.txt"}
   apple: {<<: *yaml-domain, url: "https://testingcf.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/apple.txt"}
   google: {<<: *yaml-domain, url: "https://testingcf.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/google.txt"}
