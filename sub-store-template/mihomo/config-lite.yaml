@@ -1,0 +1,145 @@
+# 机场订阅
+proxy-providers:
+  # Airport1:
+  #   url: "机场订阅"
+  #   path: ./proxy_providers/机场订阅.yaml
+  #   type: http
+  #   interval: 86400
+  #   health-check:
+  #     enable: true
+  #     url: https://www.gstatic.com/generate_204
+  #     interval: 300
+  #   proxy: DIRECT
+
+
+
+# https://wiki.metacubex.one/config/general/
+# https://github.com/MetaCubeX/mihomo/blob/Meta/docs/config.yaml
+# https://wiki.metacubex.one/example/conf/#__tabbed_3_1
+# 全局配置
+
+log-level: info # 日志等级 silent/error/warning/info/debug
+mode: rule
+port: 7890  # HTTP(S) 代理服务器端口
+socks-port: 7891 # SOCKS5 代理端口
+mixed-port: 10801 # HTTP(S) 和 SOCKS 代理混合端口
+redir-port: 7892 # 透明代理端口，用于 Linux 和 MacOS
+tproxy-port: 7893 # Transparent proxy server port for Linux (TProxy TCP and TProxy UDP)
+allow-lan: true # 允许局域网连接
+bind-address: "*" # 绑定 IP 地址，仅作用于 allow-lan 为 true，'*'表示所有地址
+ipv6: true
+
+unified-delay: true # 去除握手等额外延迟
+tcp-concurrent: true # 同时对所有ip进行连接，返回延迟最低的地址
+
+# find-process-mode has 3 values:always, strict, off
+# - always, 开启，强制匹配所有进程
+# - strict, 默认，由 mihomo 判断是否开启
+# - off, 不匹配进程，推荐在路由器上使用此模式
+find-process-mode: strict
+
+#keep-alive-idle: 600
+#keep-alive-interval: 15
+#disable-keep-alive: false
+
+profile:
+  store-selected: true  # 存储 select 选择记录
+  store-fake-ip: true # 持久化 fake-ip
+
+# 控制面板
+#external-controller: 0.0.0.0:9090
+#secret: ""
+#external-ui: "/etc/mihomo/run/ui"
+#external-ui-name: zashboard
+#external-ui-url: "https://github.com/Zephyruso/zashboard/archive/refs/heads/gh-pages.zip"
+
+# DNS模块
+dns:
+  enable: true
+  cache-algorithm: arc
+  prefer-h3: false
+  listen: 0.0.0.0:1053
+  ipv6: false
+  respect-rules: true
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter-mode: blacklist
+  fake-ip-filter:
+    - "*.lan"
+    - localhost.ptlogin2.qq.com
+    - "rule-set:private"
+    - "rule-set:direct"
+    - "+.msftconnecttest.com"
+    - "+.msftncsi.com"
+    - "time.*.com"
+  fake-ip-ttl: 1
+  default-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+  proxy-server-nameserver:
+    - 8.8.8.8
+    - 8.8.4.4
+  nameserver:
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+
+# 节点信息
+proxies: []
+
+# 出站策略
+proxy-groups:
+  - {name: 🌐 节点选择, type: select, proxies: [⚡ 自动选择], include-all: true}
+  - {name: ⚡ 自动选择, type: url-test, include-all: true, tolerance: 20, interval: 300}
+  - {name: 🧭 漏网之鱼, type: select, proxies: [🌐 节点选择, DIRECT], include-all: true}
+
+# 规则匹配
+rules:
+  - RULE-SET,applications,DIRECT
+  - RULE-SET,private,DIRECT
+  # - RULE-SET,reject,REJECT
+  - RULE-SET,icloud,DIRECT
+  - RULE-SET,apple,DIRECT
+  - RULE-SET,ai,🌐 节点选择
+  - RULE-SET,tiktok,🌐 节点选择
+  - RULE-SET,telegram_domain,🌐 节点选择
+  - RULE-SET,telegram_ip,🌐 节点选择,no-resolve
+  - RULE-SET,google,🌐 节点选择
+  - RULE-SET,proxy,🌐 节点选择
+  - RULE-SET,direct,DIRECT
+  - RULE-SET,lancidr,DIRECT
+  - RULE-SET,cncidr,DIRECT
+  - GEOIP,LAN,DIRECT,no-resolve
+  - GEOIP,CN,DIRECT,no-resolve
+  - MATCH,🧭 漏网之鱼
+
+# 规则集
+rule-anchor:
+  http-rule: &http-rule {type: http, interval: 86400}
+
+  # YAML 规则集（当前用于 Loyalsoldier）
+  yaml-domain: &yaml-domain {<<: *http-rule, behavior: domain, format: yaml}
+  yaml-ip: &yaml-ip {<<: *http-rule, behavior: ipcidr, format: yaml}
+  yaml-class: &yaml-class {<<: *http-rule, behavior: classical, format: yaml}
+
+  # MRS 规则集（当前用于 MetaCubeX）
+  mrs-domain: &mrs-domain {<<: *http-rule, behavior: domain, format: mrs}
+  mrs-ip: &mrs-ip {<<: *http-rule, behavior: ipcidr, format: mrs}
+
+rule-providers:
+  # Loyalsoldier (yaml)
+  # reject: {<<: *yaml-domain, url: "https://testingcf.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt"}
+  icloud: {<<: *yaml-domain, url: "https://testingcf.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/icloud.txt"}
+  apple: {<<: *yaml-domain, url: "https://testingcf.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/apple.txt"}
+  google: {<<: *yaml-domain, url: "https://testingcf.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/google.txt"}
+  proxy: {<<: *yaml-domain, url: "https://testingcf.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/proxy.txt"}
+  direct: {<<: *yaml-domain, url: "https://testingcf.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/direct.txt"}
+  private: {<<: *yaml-domain, url: "https://testingcf.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/private.txt"}
+  applications: {<<: *yaml-class, url: "https://testingcf.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/applications.txt"}
+  cncidr: {<<: *yaml-ip, url: "https://testingcf.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/cncidr.txt"}
+  lancidr: {<<: *yaml-ip, url: "https://testingcf.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/lancidr.txt"}
+
+  # MetaCubeX mrs
+  ai: {<<: *mrs-domain, url: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/category-ai-!cn.mrs"}
+  tiktok: {<<: *mrs-domain, url: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/tiktok.mrs"}
+  telegram_domain: {<<: *mrs-domain, url: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/telegram.mrs"}
+  telegram_ip: {<<: *mrs-ip, url: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/telegram.mrs"}
