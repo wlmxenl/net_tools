@@ -88,8 +88,7 @@ proxies: []
 
 # 出站策略
 proxy-groups:
-  - {name: 🌐 节点选择, type: select, proxies: [⚡ 自动选择], include-all: true}
-  - {name: ⚡ 自动选择, type: url-test, include-all: true, tolerance: 20, interval: 300}
+  - {name: 🌐 节点选择, type: select, include-all: true}
   - {name: 🧭 漏网之鱼, type: select, proxies: [🌐 节点选择, DIRECT], include-all: true}
 
 # 规则匹配
