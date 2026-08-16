@@ -91,7 +91,6 @@ proxy-groups:
   - {name: 🌐 节点选择, type: select, proxies: [⚡ 自动选择], include-all: true}
   - {name: ⚡ 自动选择, type: url-test, include-all: true, tolerance: 20, interval: 300}
   - {name: 🧠 AI 服务, type: select, proxies: [🌐 节点选择], include-all: true}
-  - {name: 🎶 TikTok, type: select, proxies: [🌐 节点选择], include-all: true}
   - {name: ✈️ Telegram, type: select, proxies: [🌐 节点选择], include-all: true}
   - {name: 🧭 漏网之鱼, type: select, proxies: [🌐 节点选择, DIRECT], include-all: true}
 
@@ -103,7 +102,6 @@ rules:
   - RULE-SET,icloud,DIRECT
   - RULE-SET,apple,DIRECT
   - RULE-SET,ai,🧠 AI 服务
-  - RULE-SET,tiktok,🎶 TikTok
   - RULE-SET,telegram_domain,✈️ Telegram
   - RULE-SET,telegram_ip,✈️ Telegram,no-resolve
   - RULE-SET,google,🌐 节点选择
@@ -143,6 +141,5 @@ rule-providers:
 
   # MetaCubeX mrs
   ai: {<<: *mrs-domain, url: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/category-ai-!cn.mrs"}
-  tiktok: {<<: *mrs-domain, url: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/tiktok.mrs"}
   telegram_domain: {<<: *mrs-domain, url: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/telegram.mrs"}
   telegram_ip: {<<: *mrs-ip, url: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/telegram.mrs"}
