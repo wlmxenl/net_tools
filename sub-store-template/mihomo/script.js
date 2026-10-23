@@ -33,18 +33,19 @@ function removeUnderscoreFields(obj) {
 
 clashMetaProxies = removeUnderscoreFields(clashMetaProxies)
 
-for (const p of clashMetaProxies) {
-    // 统一 TLS 客户端指纹为 chrome（仅在节点已有该字段时改写）
-    if (p['client-fingerprint']) {
-        p['client-fingerprint'] = 'chrome'
-    }
+// for (const p of clashMetaProxies) {
+//     // 统一 TLS 客户端指纹为 chrome（仅在节点已有该字段时改写）
+//     if (p['client-fingerprint']) {
+//         p['client-fingerprint'] = 'chrome'
+//     }
 
-    // 为 REALITY 节点显式开启 X25519MLKEM768
-    const ro = p['reality-opts']
-    if (ro?.['public-key'] && !ro['support-x25519mlkem768']) {
-        ro['support-x25519mlkem768'] = true
-    }
-}
+//     // 为 REALITY 节点显式开启 X25519MLKEM768
+//     const ro = p['reality-opts']
+//     if (ro?.['public-key'] && !ro['support-x25519mlkem768']) {
+//         ro['support-x25519mlkem768'] = true
+//     }
+// }
+
 // 将 Sub-Store 节点放在模板内置节点前面，保留模板中的直连等静态节点
 yaml.proxies = [...clashMetaProxies, ...(yaml.proxies || [])]
 
