@@ -33,6 +33,13 @@ function removeUnderscoreFields(obj) {
 
 clashMetaProxies = removeUnderscoreFields(clashMetaProxies)
 
+// 为 REALITY 节点显式开启 X25519MLKEM768
+for (const p of clashMetaProxies) {
+    const ro = p['reality-opts']
+    if (ro?.['public-key'] && !ro['support-x25519mlkem768']) {
+        ro['support-x25519mlkem768'] = true
+    }
+}
 // 将 Sub-Store 节点放在模板内置节点前面，保留模板中的直连等静态节点
 yaml.proxies = [...clashMetaProxies, ...(yaml.proxies || [])]
 
