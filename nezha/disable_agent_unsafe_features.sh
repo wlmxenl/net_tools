@@ -33,10 +33,20 @@ sudo() {
 set_config_value() {
     config=$1
     key=$2
+    value=${3:-true}
 
     if grep -q "^[[:space:]]*${key}[[:space:]]*:" "$config"; then
-        sudo sed -i "s|^[[:space:]]*${key}[[:space:]]*:.*|${key}: true|" "$config"
+        sudo sed -i "s|^[[:space:]]*${key}[[:space:]]*:.*|${key}: ${value}|" "$config"
     fi
+}
+
+usage() {
+    printf '%s\n' \
+        "用法：disable_agent_unsafe_features.sh [--allow-command-execute]" \
+        "" \
+        "  （无参数）                 禁用命令执行/在线终端/文件列表、内网穿透、自动更新" \
+        "  --allow-command-execute   不禁止命令执行（disable_command_execute 写为 false），" \
+        "                            内网穿透与自动更新仍保持禁用"
 }
 
 disable_agent_unsafe_features() {
@@ -64,11 +74,17 @@ disable_agent_unsafe_features() {
 
     for config in $config_files; do
         echo "正在更新配置：$config"
-        echo "  - disable_command_execute：禁用命令执行、在线终端、文件列表"
+        if [ "$allow_command_execute" -eq 1 ]; then
+            echo "  - disable_command_execute：允许命令执行、在线终端、文件列表"
+            command_execute_value=false
+        else
+            echo "  - disable_command_execute：禁用命令执行、在线终端、文件列表"
+            command_execute_value=true
+        fi
         echo "  - disable_nat：禁用内网穿透"
         echo "  - disable_auto_update：禁用自动更新"
 
-        if ! set_config_value "$config" "disable_command_execute"; then
+        if ! set_config_value "$config" "disable_command_execute" "$command_execute_value"; then
             err "更新 disable_command_execute 失败：$config"
             overall_status=1
             continue
@@ -102,5 +118,14 @@ disable_agent_unsafe_features() {
         exit 1
     fi
 }
+
+allow_command_execute=0
+for arg in "$@"; do
+    case "$arg" in
+        --allow-command-execute) allow_command_execute=1 ;;
+        -h|--help) usage; exit 0 ;;
+        *) err "未知参数：$arg"; exit 1 ;;
+    esac
+done
 
 disable_agent_unsafe_features
