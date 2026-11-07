@@ -14,21 +14,21 @@
 
 | 脚本 | 作用 |
 | --- | --- |
-| `disable_agent_unsafe_features.sh` | 关闭命令执行/在线终端/文件列表、内网穿透、自动更新 |
+| `edit_agent_config.sh` | 按参数启用/禁用命令执行、内网穿透、自动更新 |
 | `uninstall_agent.sh` | 停服并彻底卸载 nezha-agent |
 
 ## 一键运行
 
-默认禁用全部不安全特性：
+全部禁用（命令执行、内网穿透、自动更新）：
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/wlmxenl/net_tools/main/nezha/disable_agent_unsafe_features.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/wlmxenl/net_tools/main/nezha/edit_agent_config.sh) --disable-command-execute --disable-nat --disable-auto-update
 ```
 
-保留命令执行（内网穿透与自动更新仍禁用）：
+仅放开内网穿透（其余项不动）：
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/wlmxenl/net_tools/main/nezha/disable_agent_unsafe_features.sh) --allow-command-execute
+bash <(curl -fsSL https://raw.githubusercontent.com/wlmxenl/net_tools/main/nezha/edit_agent_config.sh) --enable-nat
 ```
 
 卸载 nezha-agent：
@@ -39,24 +39,37 @@ bash <(curl -fsSL https://raw.githubusercontent.com/wlmxenl/net_tools/main/nezha
 
 说明：`bash <(curl ...)` 需要 bash（主流 Linux 默认自带），脚本参数写在右括号之后。
 
-## disable_agent_unsafe_features.sh
+## edit_agent_config.sh
 
 ### 参数
 
 | 参数 | 说明 |
 | --- | --- |
-| （无参数） | `disable_command_execute`、`disable_nat`、`disable_auto_update` 全部写为 `true` |
-| `--allow-command-execute` | 仅 `disable_command_execute` 写为 `false`，放开命令执行/在线终端/文件列表；另外两项仍写为 `true` |
+| （无参数） | 仅显示用法，不修改任何配置 |
+| `--disable-command-execute` | `disable_command_execute` 写为 `true`，禁用命令执行/在线终端/文件列表 |
+| `--enable-command-execute` | `disable_command_execute` 写为 `false`，放开命令执行/在线终端/文件列表 |
+| `--disable-nat` | `disable_nat` 写为 `true`，禁用内网穿透 |
+| `--enable-nat` | `disable_nat` 写为 `false`，放开内网穿透 |
+| `--disable-auto-update` | `disable_auto_update` 写为 `true`，禁用自动更新 |
+| `--enable-auto-update` | `disable_auto_update` 写为 `false`，放开自动更新 |
 | `-h`、`--help` | 显示帮助 |
 
-### 配置项影响
+规则：
 
-| 配置项 | 无参数 | `--allow-command-execute` |
-| --- | --- | --- |
-| `disable_command_execute` | `true` | `false` |
-| `disable_nat` | `true` | `true` |
-| `disable_auto_update` | `true` | `true` |
-| `disable_force_update` | 不修改 | 不修改 |
+- 至少指定一个开关，否则只显示用法并以退出码 `1` 结束。
+- 只修改显式指定的配置项，未指定的项保持原值不动。
+- 同一项同时传 `--disable-X` 与 `--enable-X` 会报错退出。
+
+### 配置项影响示例
+
+以 `--enable-nat` 为例（其余项不动）：
+
+| 配置项 | 结果 |
+| --- | --- |
+| `disable_nat` | `false` |
+| `disable_command_execute` | 保持原值 |
+| `disable_auto_update` | 保持原值 |
+| `disable_force_update` | 不修改 |
 
 `disable_force_update` 始终不修改，以保留远程更新 agent 的能力。
 
@@ -66,20 +79,9 @@ bash <(curl -fsSL https://raw.githubusercontent.com/wlmxenl/net_tools/main/nezha
 - 配置文件里不存在某个键时会跳过该键，不会主动新增；agent 对这些键的缺省值等同于未禁用。
 - 修改失败或重启失败会输出红色错误提示，最终以退出码 `1` 结束。
 
-### 手动放开内网穿透/自动更新
-
-脚本只提供命令执行的单独开关。需要放开另外两项时，修改配置后重启服务：
-
-```bash
-sudo sed -i 's/^disable_nat: true/disable_nat: false/; s/^disable_auto_update: true/disable_auto_update: false/' /opt/nezha/agent/config.yml
-sudo /opt/nezha/agent/nezha-agent service -c /opt/nezha/agent/config.yml restart
-```
-
-存在多个 `config*.yml` 时逐一处理。
-
 ## 安全提示
 
-`--allow-command-execute` 会重新开启面板的命令执行能力：任何持有面板管理员权限的人都能在该服务器上执行任意命令，仅在明确需要时使用。
+`--enable-command-execute` 会重新开启面板的命令执行能力：任何持有面板管理员权限的人都能在该服务器上执行任意命令，仅在明确需要时使用。
 
 ## 卸载说明
 
