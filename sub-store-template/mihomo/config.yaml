@@ -91,9 +91,9 @@ proxy-groups:
   - {name: 🌐 节点选择, type: select, proxies: [⚡ 自动选择, ☁️ CF_US], include-all: true, exclude-filter: '(?i)^us_.+_\d+$'}
   - {name: ⚡ 自动选择, type: url-test, proxies: [☁️ CF_US], include-all: true, exclude-filter: '(?i)^us_.+_\d+$', tolerance: 20, interval: 300}
   - {name: ☁️ CF_US, type: url-test, include-all: true, filter: '(?i)^us_.+_\d+$', tolerance: 20, interval: 300}
-  - {name: 🧠 AI 服务, type: select, proxies: [🌐 节点选择], include-all: true}
-  - {name: ✈️ Telegram, type: select, proxies: [🌐 节点选择], include-all: true}
-  - {name: 🧭 漏网之鱼, type: select, proxies: [🌐 节点选择, DIRECT], include-all: true}
+  - {name: 🧠 AI 服务, type: select, proxies: [🌐 节点选择, ☁️ CF_US], include-all: true, exclude-filter: '(?i)^us_.+_\d+$'}
+  - {name: ✈️ Telegram, type: select, proxies: [🌐 节点选择, ☁️ CF_US], include-all: true, exclude-filter: '(?i)^us_.+_\d+$'}
+  - {name: 🧭 漏网之鱼, type: select, proxies: [🌐 节点选择, ☁️ CF_US, DIRECT], include-all: true, exclude-filter: '(?i)^us_.+_\d+$'}
 
 # 规则匹配
 rules:
